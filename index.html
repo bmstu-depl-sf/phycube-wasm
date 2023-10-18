@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <section class="main">
+        <canvas id="cube_canvas" oncontextmenu="event.preventDefault()" style="width: 100% !important;"></canvas>
+    </section>
+    <section class="sidebar">
+        <h2>Wilson Cloud Chamber</h2>
+        <p>This is just a demo...</p>
+        <canvas id="vectors_canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </section>
+
+    <script type='text/javascript'>
+        var Module = {
+            canvas: (function() { return document.getElementById('cube_canvas'); })()
+        };
+    </script>
+
+    <script src="build/cube.js"></script>
+    <script src="build/vectors.js"></script>
+
+    <script type='text/javascript'>
+        Vectors().then((instance) => {
+            instance['canvas']=(function() { return document.getElementById('vectors_canvas'); })();
+            instance._main()
+        });
+    </script>
+</body>
+</html>

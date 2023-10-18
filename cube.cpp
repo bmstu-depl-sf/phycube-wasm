@@ -13,6 +13,10 @@ Vector3 mul(Vector3 a, float b) {
     return c;
 }
 
+float size(Vector3 a) {
+    return sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
+}
+
 // Simple point class
 class Point {
 private:
@@ -36,7 +40,7 @@ int main(void)
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1200;
-    const int screenHeight = 600;
+    const int screenHeight = 1200;
     InitWindow(screenWidth, screenHeight, "raylib example");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
@@ -45,12 +49,12 @@ int main(void)
     camera.position = (Vector3){ 20.0f, 0.0f, 0.0f };   // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 0.0f, 1.0f };          // Camera up vector (rotation towards target)
-    camera.fovy = 50.0f;                                // Camera field-of-view Y
+    camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     std::vector<Point> points;
     float speed = 0.1, angle=0;
-    int ticks_after_last_point, camera_mode=CAMERA_THIRD_PERSON;
+    int ticks_after_last_point;
 
     SetTargetFPS(60);                   // Set our example to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -67,26 +71,8 @@ int main(void)
             points.push_back(Point(WHITE, 0.15f, {0, -5, 0}, speed3, boost3));
         }
         
-        // Change camera projection on left mouse click
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (camera.projection == CAMERA_PERSPECTIVE) {
-                camera.projection = CAMERA_ORTHOGRAPHIC;
-                camera.fovy = 25.0f;
-            }
-            else {
-                camera.projection = CAMERA_PERSPECTIVE;
-                camera.fovy = 50.0f;
-            }
-        }
-        
-        // Change camera mode on right mouse click
-        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-            if (camera_mode == CAMERA_THIRD_PERSON)
-                camera_mode = CAMERA_ORBITAL;
-            else
-                camera_mode = CAMERA_THIRD_PERSON;
-        }
-        UpdateCamera(&camera, camera_mode);
+        UpdateCamera(&camera, CAMERA_THIRD_PERSON);
+        camera.position = mul(camera.position, 20 / size(camera.position)); // Disable zoom?
         
         // Draw
         //----------------------------------------------------------------------------------
