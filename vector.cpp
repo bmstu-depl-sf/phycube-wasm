@@ -1,4 +1,4 @@
-#include "raylib.h"
+#include "cube.h"
 
 int main(void)
 {
@@ -24,7 +24,16 @@ int main(void)
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         UpdateCamera(&camera, CAMERA_ORBITAL);
-        
+        camera.position.x = EM_ASM_DOUBLE({
+            return camera_position_x;
+        });
+        camera.position.y = EM_ASM_DOUBLE({
+            return camera_position_y;
+        });
+        camera.position.z = EM_ASM_DOUBLE({
+            return camera_position_z;
+        });
+
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -32,10 +41,20 @@ int main(void)
             ClearBackground(BLACK);
             BeginMode3D(camera);
 
-                // Add axes & vector here (static or randomly moving)
-                DrawSphere({-5, 0, 0}, 1.0f, RED);
-                DrawSphere({0, 0, 0}, 1.0f, GREEN);
-                DrawSphere({5, 0, 0}, 1.0f, BLUE);
+            DrawLine3D({0, -5, 0}, {5, -5, 0}, RED);
+            DrawLine3D({0, -5, 0}, {0, 0, 0}, GREEN);
+            DrawLine3D({0, -5, 0}, {0, -5, 5}, BLUE);
+
+            double vector_x = EM_ASM_DOUBLE({
+                return vector_position_x;
+            });
+             double vector_y = EM_ASM_DOUBLE({
+                return vector_position_y;
+            });
+             double vector_z = EM_ASM_DOUBLE({
+                return vector_position_z;
+            });
+            DrawLine3D({0, -5, 0}, {static_cast<float> (vector_x), static_cast<float> (vector_y), static_cast<float> (vector_z)}, YELLOW);
 
             EndMode3D();
 

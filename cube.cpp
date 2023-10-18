@@ -1,8 +1,6 @@
-#include "raylib.h"
-#include <cmath>
-#include <vector>
-
+#include "cube.h"
 // Some vector funcs
+
 Vector3 sum(Vector3 a, Vector3 b) {
     Vector3 c = {a.x + b.x, a.y + b.y, a.z + b.z};
     return c;
@@ -17,23 +15,10 @@ float size(Vector3 a) {
     return sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
 }
 
-// Simple point class
-class Point {
-private:
-    Vector3 speed, boost; 
-public:
-    float radius;
-    Color color;
-    Vector3 position;
-
-    Point(Color color, float radius = 1.0f, Vector3 position = {0, 0, 0}, Vector3 speed = {0, 0, 0}, Vector3 boost = {0, 0, 0}):
-        speed(speed), boost(boost), radius(radius), color(color), position(position) {};
-
-    void move() {
+void Point::move() {
         speed = sum(speed, boost);
         position = sum(position, speed);
     }
-};
 
 int main(void)
 {
@@ -63,7 +48,7 @@ int main(void)
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         // Shot new point if enough time spent
-        if (++ticks_after_last_point > 10) {
+        if (++ticks_after_last_point > 100) {
             ticks_after_last_point = 0;
             angle = (float) GetRandomValue(-30, 30) / 100;
             Vector3 speed3 = {0.0, speed * cosf(angle), speed * sinf(angle)};
@@ -73,7 +58,11 @@ int main(void)
         
         UpdateCamera(&camera, CAMERA_THIRD_PERSON);
         camera.position = mul(camera.position, 20 / size(camera.position)); // Disable zoom?
-        
+        EM_ASM({
+            camera_position_x = $0;
+            camera_position_y = $1;
+            camera_position_z = $2;
+        }, camera.position.x, camera.position.y, camera.position.z);
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -94,9 +83,15 @@ int main(void)
                 DrawCubeWires((Vector3){0.0f, 0.0f, 0.0f}, 10.0f, 10.0f, 10.0f, WHITE);
 
                 // Draw axes and shot vector
-                DrawLine3D({0, -5, 0}, {5, -5, 0}, RED);
-                DrawLine3D({0, -5, 0}, {0, 0, 0}, GREEN);
-                DrawLine3D({0, -5, 0}, {0, -5, 5}, BLUE);
+                // DrawLine3D({-5, -5, -5}, {0, -5, -5}, RED);
+                // DrawLine3D({-5, -5, -5}, {-5, 0, -5}, GREEN);
+                // DrawLine3D({-5, -5, -5}, {-5, -5, 0}, BLUE);
+
+                EM_ASM({
+                    vector_position_x = $0;
+                    vector_position_y = $1;
+                    vector_position_z = $2;
+                }, 0, -5 + 5 * cosf(angle), 5 * sinf(angle));
                 DrawLine3D({0, -5, 0}, {0, -5 + 5 * cosf(angle), 5 * sinf(angle)}, YELLOW);
 
             EndMode3D();
