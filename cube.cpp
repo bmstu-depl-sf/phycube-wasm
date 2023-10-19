@@ -51,7 +51,7 @@ int main(void)
         if (++ticks_after_last_point > 100) {
             ticks_after_last_point = 0;
             angle = (float) GetRandomValue(-30, 30) / 100;
-            Vector3 speed3 = {0.0, speed * cosf(angle), speed * sinf(angle)};
+            Vector3 speed3 = {speed * sinf(angle) * 2 * cosf(angle), speed * cosf(angle), speed * sinf(angle)};
             Vector3 boost3 = mul(speed3, 0.1);
             points.push_back(Point(WHITE, 0.15f, {0, -5, 0}, speed3, boost3));
         }
@@ -91,8 +91,8 @@ int main(void)
                     vector_position_x = $0;
                     vector_position_y = $1;
                     vector_position_z = $2;
-                }, 0, -5 + 5 * cosf(angle), 5 * sinf(angle));
-                DrawLine3D({0, -5, 0}, {0, -5 + 5 * cosf(angle), 5 * sinf(angle)}, YELLOW);
+                }, 5 * 2 * sinf(angle) * cosf(angle), -5 + 5 * cosf(angle), 5 * sinf(angle));
+                DrawLine3D({0, -5, 0}, {5 * 2 * sinf(angle) * cosf(angle), -5 + 5 * cosf(angle), 5 * sinf(angle)}, YELLOW);
 
             EndMode3D();
 
