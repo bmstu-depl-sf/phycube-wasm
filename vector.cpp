@@ -4,6 +4,11 @@
 #include <vector>
 #include <emscripten.h>
 
+Vector3 mul(Vector3 a, float b) {
+    Vector3 c = {a.x * b, a.y * b, a.z * b};
+    return c;
+}
+
 int main(void)
 {
     // Initialization
@@ -18,7 +23,7 @@ int main(void)
     camera.position = (Vector3){ 20.0f, 0.0f, 0.0f };   // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 0.0f, 1.0f };          // Camera up vector (rotation towards target)
-    camera.fovy = 60.0f;                                // Camera field-of-view Y
+    camera.fovy = 35.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     SetTargetFPS(60);                   // Set our example to run at 60 frames-per-second
@@ -45,9 +50,14 @@ int main(void)
             ClearBackground(BLACK);
             BeginMode3D(camera);
 
-            DrawLine3D({0, -5, 0}, {5, -5, 0}, RED);
-            DrawLine3D({0, -5, 0}, {0, 0, 0}, GREEN);
-            DrawLine3D({0, -5, 0}, {0, -5, 5}, BLUE);
+            // DrawLine3D({0, -5, 0}, {5, -5, 0}, RED);
+            // DrawLine3D({0, -5, 0}, {0, 0, 0}, GREEN);
+            // DrawLine3D({0, -5, 0}, {0, -5, 5}, BLUE);
+
+            DrawLine3D({5, 0, 0}, {0, 0, 0}, RED);
+            DrawLine3D({0, 5, 0}, {0, 0, 0}, GREEN);
+            DrawLine3D({0, 0, 5}, {0, 0, 0}, BLUE);
+
 
             double vector_x = EM_ASM_DOUBLE({
                 return vector_position_x;
@@ -58,7 +68,9 @@ int main(void)
              double vector_z = EM_ASM_DOUBLE({
                 return vector_position_z;
             });
-            DrawLine3D({0, -5, 0}, {static_cast<float> (vector_x), static_cast<float> (vector_y), static_cast<float> (vector_z)}, YELLOW);
+            // DrawLine3D({0, -5, 0}, {static_cast<float> (vector_x), static_cast<float> (vector_y), static_cast<float> (vector_z)}, YELLOW);
+            
+             DrawLine3D(mul({0 + static_cast<float> (vector_x), 5 + static_cast<float> (vector_y), 0 + static_cast<float> (vector_z)}, 2), {0, 0, 0}, YELLOW);
 
             EndMode3D();
 

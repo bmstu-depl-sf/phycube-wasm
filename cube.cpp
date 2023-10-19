@@ -84,8 +84,8 @@ int main(void)
                     vector_position_x = $0;
                     vector_position_y = $1;
                     vector_position_z = $2;
-                }, 0, -5 + 5 * cosf(angle), 5 * sinf(angle));
-                DrawLine3D({0, -5, 0}, {0, -5 + 5 * cosf(angle), 5 * sinf(angle)}, YELLOW);
+                }, 5 * 2 * sinf(angle) * cosf(angle), -5 + 5 * cosf(angle), 5 * sinf(angle));
+                DrawLine3D({0, -5, 0}, {5 * 2 * sinf(angle) * cosf(angle), -5 + 5 * cosf(angle), 5 * sinf(angle)}, YELLOW);
 
             EndMode3D();
 
