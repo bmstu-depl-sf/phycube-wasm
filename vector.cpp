@@ -1,4 +1,8 @@
 #include "common.h"
+#include "raylib.h"
+#include <cmath>
+#include <vector>
+#include <emscripten.h>
 
 int main(void)
 {
