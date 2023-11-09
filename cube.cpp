@@ -1,4 +1,6 @@
-#include "cube.h"
+#include "common.h"
+#include "WilsonCloudChamber.h"
+#include <iostream>
 // Some vector funcs
 
 Vector3 sum(Vector3 a, Vector3 b) {
@@ -15,13 +17,17 @@ float size(Vector3 a) {
     return sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
 }
 
-void Point::move() {
-        speed = sum(speed, boost);
-        position = sum(position, speed);
-    }
+using namespace std;
+using namespace phycoub;
 
 int main(void)
 {
+    const double dt = 1e-15;
+    WilsonCloudChamber wilsonCloudChamber;
+    wilsonCloudChamber.setBorders({2, 2, 2});
+    wilsonCloudChamber.setDeltaTime(dt);
+    wilsonCloudChamber.setElectronSourcBornPeriod(100 * dt);
+
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1200;
@@ -37,9 +43,7 @@ int main(void)
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    std::vector<Point> points;
-    float speed = 0.1, angle=0;
-    int ticks_after_last_point;
+    float angle=0;
 
     SetTargetFPS(60);                   // Set our example to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -47,15 +51,6 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
-        // Shot new point if enough time spent
-        if (++ticks_after_last_point > 100) {
-            ticks_after_last_point = 0;
-            angle = (float) GetRandomValue(-30, 30) / 100;
-            Vector3 speed3 = {0.0, speed * cosf(angle), speed * sinf(angle)};
-            Vector3 boost3 = mul(speed3, 0.1);
-            points.push_back(Point(WHITE, 0.15f, {0, -5, 0}, speed3, boost3));
-        }
-        
         UpdateCamera(&camera, CAMERA_THIRD_PERSON);
         camera.position = mul(camera.position, 20 / size(camera.position)); // Disable zoom?
         EM_ASM({
@@ -69,23 +64,21 @@ int main(void)
 
             ClearBackground(BLACK);
             BeginMode3D(camera);
-
-                // Draw points and delete them if they're out of cube
-                for (int i = 0; i < points.size(); i++) {
-                    points[i].move();
-                    if (fmax(fmax(fabs(points[i].position.x), fabs(points[i].position.y)), fabs(points[i].position.z)) >= 5)
-                        points.erase(std::next(points.begin(), i--));
-                    else
-                        DrawSphere(points[i].position, points[i].radius, points[i].color);
+            
+                wilsonCloudChamber.phyCoub();
+                auto particleGroupList = wilsonCloudChamber.getUniqParticleGroupList();
+                for (auto particleGroupIt = particleGroupList.begin(); particleGroupIt != particleGroupList.end(); particleGroupIt++) {
+                    auto particleGroup = particleGroupIt->get();
+                    for (auto particleIt = particleGroup->begin(); particleIt != particleGroup->end(); particleIt++) {
+                        auto particle = particleIt->get();
+                        auto coordinate = particle->getCoordinate();
+                        DrawSphere({(float) coordinate.x() * 100000, (float) coordinate.y() * 100000, (float) coordinate.z() * 100000}, 0.25, RED);
+                        cout << coordinate.x() << " " << coordinate.y() << " " << coordinate.z() << endl;
+                    }
                 }
                 
-                // Fraw cube
+                // Draw cube
                 DrawCubeWires((Vector3){0.0f, 0.0f, 0.0f}, 10.0f, 10.0f, 10.0f, WHITE);
-
-                // Draw axes and shot vector
-                // DrawLine3D({-5, -5, -5}, {0, -5, -5}, RED);
-                // DrawLine3D({-5, -5, -5}, {-5, 0, -5}, GREEN);
-                // DrawLine3D({-5, -5, -5}, {-5, -5, 0}, BLUE);
 
                 EM_ASM({
                     vector_position_x = $0;

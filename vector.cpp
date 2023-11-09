@@ -1,4 +1,4 @@
-#include "cube.h"
+#include "common.h"
 
 int main(void)
 {

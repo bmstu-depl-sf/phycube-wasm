@@ -1,9 +1,11 @@
 CC = em++
-CFLAGS += -Os -s USE_GLFW=3 -s USE_SDL=2 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -O1 -Wall -Werror -std=c++20 -D_DEFAULT_SOURCE -Wno-missing-braces
-INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/include
-LDLIBS = $(RAYLIB_PATH)/lib/libraylib.a
-PLATFORM=PLATFORM_DESKTOP
+CFLAGS += -Os -s USE_GLFW=3 -s USE_SDL=2 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -O1 -Wall -Werror -std=c++17 -D_DEFAULT_SOURCE -Wno-missing-braces
+INCLUDE_PATHS = -I. -I$(RAYLIB_PATH)/include -I$(PHYCOUB_PATH)/include
+LDLIBS = $(RAYLIB_PATH)/lib/libraylib.a $(PHYCOUB_PATH)/lib/libphycoub.a
+PLATFORM = PLATFORM_DESKTOP
 
+RAYLIB_PATH = raylib_webassembly
+PHYCOUB_PATH = phycoub_webassembly
 
 all: main
 
