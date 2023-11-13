@@ -22,9 +22,10 @@ using namespace phycoub;
 
 int main(void)
 {
-    const double dt = 1e-15;
+    const double dt = 1e-13;
     WilsonCloudChamber wilsonCloudChamber;
-    wilsonCloudChamber.setBorders({2, 2, 2});
+    Vector borders(1e-4), cubeSize(10);
+    wilsonCloudChamber.setBorders(borders);
     wilsonCloudChamber.setDeltaTime(dt);
     wilsonCloudChamber.setElectronSourcBornPeriod(100 * dt);
 
@@ -38,7 +39,7 @@ int main(void)
     // Define the camera to look into our 3d world
     Camera camera = { 0 };
     camera.position = (Vector3){ 20.0f, 0.0f, 0.0f };   // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.target = (Vector3){ 5.0f, 5.0f, 5.0f };      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 0.0f, 1.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
@@ -52,12 +53,13 @@ int main(void)
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         UpdateCamera(&camera, CAMERA_THIRD_PERSON);
-        camera.position = mul(camera.position, 20 / size(camera.position)); // Disable zoom?
+        //camera.position = mul(camera.position, 20 / size(camera.position)); // Disable zoom?
         EM_ASM({
             camera_position_x = $0;
             camera_position_y = $1;
             camera_position_z = $2;
         }, camera.position.x, camera.position.y, camera.position.z);
+        vector<Color> colors = {RED, GREEN, BLUE, YELLOW};
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -67,25 +69,26 @@ int main(void)
             
                 wilsonCloudChamber.phyCoub();
                 auto particleGroupList = wilsonCloudChamber.getUniqParticleGroupList();
-                for (auto particleGroupIt = particleGroupList.begin(); particleGroupIt != particleGroupList.end(); particleGroupIt++) {
+                auto particleGroupIt = particleGroupList.begin();
+                auto colorIt = colors.begin();
+                for (; particleGroupIt != particleGroupList.end(); particleGroupIt++, colorIt++) {
                     auto particleGroup = particleGroupIt->get();
                     for (auto particleIt = particleGroup->begin(); particleIt != particleGroup->end(); particleIt++) {
                         auto particle = particleIt->get();
                         auto coordinate = particle->getCoordinate();
-                        DrawSphere({(float) coordinate.x() * 100000, (float) coordinate.y() * 100000, (float) coordinate.z() * 100000}, 0.25, RED);
+                        DrawSphere({(float) (coordinate.x() / borders.x() * cubeSize.x()), (float) (coordinate.y() / borders.y() * cubeSize.y()), (float) (coordinate.z() / borders.z() * cubeSize.z())}, 0.1, *colorIt);
                         cout << coordinate.x() << " " << coordinate.y() << " " << coordinate.z() << endl;
                     }
                 }
                 
                 // Draw cube
-                DrawCubeWires((Vector3){0.0f, 0.0f, 0.0f}, 10.0f, 10.0f, 10.0f, WHITE);
+                DrawCubeWires(camera.target, cubeSize.x(), cubeSize.y(), cubeSize.z(), WHITE);
 
                 EM_ASM({
                     vector_position_x = $0;
                     vector_position_y = $1;
                     vector_position_z = $2;
                 }, 5 * 2 * sinf(angle) * cosf(angle), -5 + 5 * cosf(angle), 5 * sinf(angle));
-                DrawLine3D({0, -5, 0}, {5 * 2 * sinf(angle) * cosf(angle), -5 + 5 * cosf(angle), 5 * sinf(angle)}, YELLOW);
 
             EndMode3D();
 
