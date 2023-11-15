@@ -9,6 +9,27 @@ Vector3 mul(Vector3 a, float b) {
     return c;
 }
 
+Vector3 anglesToVector(double theta, double alpha)
+{
+    theta *= 3.14 / 180;
+    alpha *= 3.14 / 180;
+    printf("%.2f %.2f\n", theta, alpha);
+    double x, y, z, len;
+    if (alpha) {
+        x = sin(theta);
+        y = cos(theta);
+        z = 1.0 / tan(alpha);
+    }
+    else {
+        x = 0;
+        y = 0;
+        z = 1;
+    }
+    len = sqrt(x*x + y*y + z*z) / 5;
+    Vector3 result = {static_cast<float>(x / len), static_cast<float>(y / len), static_cast<float>(z / len)};
+    return result;
+}
+
 int main(void)
 {
     // Initialization
@@ -43,6 +64,13 @@ int main(void)
             return camera_position_z;
         });
 
+        double electron_theta = EM_ASM_DOUBLE({
+            return electron_theta;
+        });
+        double electron_alpha = EM_ASM_DOUBLE({
+            return electron_alpha;
+        });
+
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -58,19 +86,9 @@ int main(void)
             DrawLine3D({0, 5, 0}, {0, 0, 0}, GREEN);
             DrawLine3D({0, 0, 5}, {0, 0, 0}, BLUE);
 
-
-            double vector_x = EM_ASM_DOUBLE({
-                return vector_position_x;
-            });
-             double vector_y = EM_ASM_DOUBLE({
-                return vector_position_y;
-            });
-             double vector_z = EM_ASM_DOUBLE({
-                return vector_position_z;
-            });
             // DrawLine3D({0, -5, 0}, {static_cast<float> (vector_x), static_cast<float> (vector_y), static_cast<float> (vector_z)}, YELLOW);
             
-             DrawLine3D(mul({0 + static_cast<float> (vector_x), 5 + static_cast<float> (vector_y), 0 + static_cast<float> (vector_z)}, 2), {0, 0, 0}, YELLOW);
+             DrawLine3D(anglesToVector(electron_theta, electron_alpha), {0, 0, 0}, YELLOW);
 
             EndMode3D();
 
