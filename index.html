@@ -10,12 +10,27 @@
         <canvas id="cube_canvas" oncontextmenu="event.preventDefault()" style="width: 100% !important;"></canvas>
     </section>
     <section class="sidebar">
-        <h2>Wilson Cloud Chamber</h2>
-        <p>This is just a demo...</p>
         <canvas id="vectors_canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <div>
+            <label>
+                theta
+            </label>
+                <input type="number" min="0" max="180" step="1" value="90" onchange="electron_theta = this.value;">
+        </div>
+        <div>
+            <label>
+                alpha
+            </label>
+                <input type="number" min="0" max="180" step="1" value="90" onchange="electron_alpha = this.value;">
+        </div>
     </section>
 
     <script type='text/javascript'>
+        electron_theta = 90;
+        electron_alpha = 90;
+        camera_position_x = 0;
+        camera_position_y = 0;
+        camera_position_z = 0;
         var Module = {
             canvas: (function() { return document.getElementById('cube_canvas'); })()
         };
