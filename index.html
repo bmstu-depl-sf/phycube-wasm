@@ -10,38 +10,82 @@
         <canvas id="cube_canvas" oncontextmenu="event.preventDefault()" style="width: 100% !important;"></canvas>
     </section>
     <section class="sidebar">
-        <canvas id="vectors_canvas" oncontextmenu="event.preventDefault()"></canvas>
-        <div>
-            <label>
-                theta
-            </label>
-                <input type="number" min="0" max="180" step="1" value="90" onchange="electron_theta = this.value;">
+        <h2>Shoot direction</h2>
+        <canvas id="shoot_canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <div class="slider-group">
+            <label>Θ</label>
+            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.shoot.theta = this.value;">
         </div>
-        <div>
-            <label>
-                alpha
-            </label>
-                <input type="number" min="0" max="180" step="1" value="90" onchange="electron_alpha = this.value;">
+        <div class="slider-group">
+            <label>α</label>
+            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.shoot.alpha = this.value;">
+        </div>
+
+        <h2>Magnetic Field direction</h2>
+        <canvas id="magnetic_canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <div class="slider-group">
+            <label>Θ</label>
+            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.magnetic.theta = this.value;">
+        </div>
+        <div class="slider-group">
+            <label>α</label>
+            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.magnetic.alpha = this.value;">
+        </div>
+        <div class="slider-group">
+            <label>Force</label>
+            <input type="range" min="0" max="10" step="1" value="0" oninput="directions.magnetic.force = this.value;">
+        </div>
+
+        <h2>Electric Field direction</h2>
+        <canvas id="electric_canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <div class="slider-group">
+            <label>Θ</label>
+            <input type="range" min="-90" max="270" step="1" value="90" oninput="directions.electric.theta = this.value;">
+        </div>
+        <div class="slider-group">
+            <label>α</label>
+            <input type="range" min="-90" max="270" step="1" value="90" oninput="directions.electric.alpha = this.value;">
+        </div>
+        <div class="slider-group">
+            <label>Force</label>
+            <input type="range" min="0" max="1000000000000" step="1" value="0" oninput="directions.electric.force = this.value;">
         </div>
     </section>
 
     <script type='text/javascript'>
-        electron_theta = 90;
-        electron_alpha = 90;
-        camera_position_x = 0;
-        camera_position_y = 0;
-        camera_position_z = 0;
+        let shoot = {theta: 90, alpha: 90}, magnetic = {theta: 90, alpha: 90, force: 0}, electric = {theta: 90, alpha: 90, force: 10};
+        let directions = {shoot, magnetic, electric};
+        let camera = {x: 0, y: 0, z: 0};
         var Module = {
             canvas: (function() { return document.getElementById('cube_canvas'); })()
         };
+
+        function directionById(id) {
+            if (id == 0)
+                return directions.shoot;
+            if (id == 1)
+                return directions.magnetic;
+            if (id == 2)
+                return directions.electric;
+        }
     </script>
 
     <script src="build/cube.js"></script>
-    <script src="build/vectors.js"></script>
+    <script src="build/shoot.js"></script>
+    <script src="build/magnetic.js"></script>
+    <script src="build/electric.js"></script>
 
     <script type='text/javascript'>
-        Vectors().then((instance) => {
-            instance['canvas']=(function() { return document.getElementById('vectors_canvas'); })();
+        Shoot().then((instance) => {
+            instance['canvas']=(function() { return document.getElementById('shoot_canvas'); })();
+            instance._main()
+        });
+        Magnetic().then((instance) => {
+            instance['canvas']=(function() { return document.getElementById('magnetic_canvas'); })();
+            instance._main()
+        });
+        Electric().then((instance) => {
+            instance['canvas']=(function() { return document.getElementById('electric_canvas'); })();
             instance._main()
         });
     </script>

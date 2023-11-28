@@ -22,6 +22,8 @@ section.main canvas {
 }
 
 section.sidebar {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
     padding: 20px;
     background-color: lightgrey;
 }
@@ -30,4 +32,12 @@ section.sidebar canvas {
     border-radius: 20px;
     width: 300px;
     height: 300px;
+}
+
+.slider-group {
+    display: flex;
+    justify-content: space-between;
+}
+.slider-group input {
+    width: 70%;
 }

@@ -9,11 +9,14 @@ Vector3 mul(Vector3 a, float b) {
     return c;
 }
 
+float size(Vector3 a) {
+    return sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
+}
+
 Vector3 anglesToVector(double theta, double alpha)
 {
     theta *= 3.14 / 180;
     alpha *= 3.14 / 180;
-    printf("%.2f %.2f\n", theta, alpha);
     double x, y, z, len;
     if (alpha) {
         x = sin(theta);
@@ -53,23 +56,25 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
-        UpdateCamera(&camera, CAMERA_ORBITAL);
+        UpdateCamera(&camera, CAMERA_THIRD_PERSON);
+
         camera.position.x = EM_ASM_DOUBLE({
-            return camera_position_x;
+            return camera.x;
         });
         camera.position.y = EM_ASM_DOUBLE({
-            return camera_position_y;
+            return camera.y;
         });
         camera.position.z = EM_ASM_DOUBLE({
-            return camera_position_z;
+            return camera.z;
         });
+        camera.position = mul(camera.position, 20 / size(camera.position)); 
 
-        double electron_theta = EM_ASM_DOUBLE({
-            return electron_theta;
-        });
-        double electron_alpha = EM_ASM_DOUBLE({
-            return electron_alpha;
-        });
+        double theta = EM_ASM_DOUBLE({
+            return directionById($0).theta;
+        }, OBJECT);
+        double alpha = EM_ASM_DOUBLE({
+            return directionById($0).alpha;
+        }, OBJECT);
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -78,17 +83,15 @@ int main(void)
             ClearBackground(BLACK);
             BeginMode3D(camera);
 
-            // DrawLine3D({0, -5, 0}, {5, -5, 0}, RED);
-            // DrawLine3D({0, -5, 0}, {0, 0, 0}, GREEN);
-            // DrawLine3D({0, -5, 0}, {0, -5, 5}, BLUE);
-
             DrawLine3D({5, 0, 0}, {0, 0, 0}, RED);
+            DrawCylinderEx({5, 0, 0}, {5.5, 0, 0}, 0.15, 0, 25, RED);
             DrawLine3D({0, 5, 0}, {0, 0, 0}, GREEN);
+            DrawCylinderEx({0, 5, 0}, {0, 5.5, 0}, 0.15, 0, 25, GREEN);
             DrawLine3D({0, 0, 5}, {0, 0, 0}, BLUE);
+            DrawCylinderEx({0, 0, 5}, {0, 0, 5.5}, 0.15, 0, 25, BLUE);
 
-            // DrawLine3D({0, -5, 0}, {static_cast<float> (vector_x), static_cast<float> (vector_y), static_cast<float> (vector_z)}, YELLOW);
-            
-             DrawLine3D(anglesToVector(electron_theta, electron_alpha), {0, 0, 0}, YELLOW);
+            DrawLine3D(anglesToVector(theta, alpha), {0, 0, 0}, YELLOW);
+            DrawCylinderEx(anglesToVector(theta, alpha), mul(anglesToVector(theta, alpha), 5.5/5.0), 0.15, 0, 25, YELLOW);
 
             EndMode3D();
 
