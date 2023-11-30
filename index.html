@@ -7,54 +7,89 @@
 </head>
 <body>
     <section class="main">
-        <canvas id="cube_canvas" oncontextmenu="event.preventDefault()" style="width: 100% !important;"></canvas>
+        <div class="pause" onclick="togglePause()" symbol="⏸"></div>
+        <canvas id="cube_canvas" onclick="togglePause()" oncontextmenu="event.preventDefault()"></canvas>
     </section>
     <section class="sidebar">
-        <h2>Shoot direction</h2>
-        <canvas id="shoot_canvas" oncontextmenu="event.preventDefault()"></canvas>
-        <div class="slider-group">
-            <label>Θ</label>
-            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.shoot.theta = this.value;">
+        <div class="info">
+            <button type="button" onclick="modal.style.display = 'block';">ℹ</button>
         </div>
-        <div class="slider-group">
-            <label>α</label>
-            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.shoot.alpha = this.value;">
-        </div>
-
-        <h2>Magnetic Field direction</h2>
-        <canvas id="magnetic_canvas" oncontextmenu="event.preventDefault()"></canvas>
-        <div class="slider-group">
-            <label>Θ</label>
-            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.magnetic.theta = this.value;">
-        </div>
-        <div class="slider-group">
-            <label>α</label>
-            <input type="range" min="0" max="180" step="1" value="90" oninput="directions.magnetic.alpha = this.value;">
-        </div>
-        <div class="slider-group">
-            <label>Force</label>
-            <input type="range" min="0" max="10" step="1" value="0" oninput="directions.magnetic.force = this.value;">
+        <div class="params-group">
+            <h2>Выстрел частиц</h2>
+            <canvas id="shoot_canvas" oncontextmenu="event.preventDefault()"></canvas>
+            <div class="slider-group">
+                <label>Θ (<span class="shoot-theta">90</span>°)</label>
+                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('shoot', 'theta', this.value);">
+            </div>
+            <div class="slider-group">
+                <label>α (<span class="shoot-alpha">90</span>°)</label>
+                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('shoot', 'alpha', this.value);">
+            </div>
         </div>
 
-        <h2>Electric Field direction</h2>
-        <canvas id="electric_canvas" oncontextmenu="event.preventDefault()"></canvas>
-        <div class="slider-group">
-            <label>Θ</label>
-            <input type="range" min="-90" max="270" step="1" value="90" oninput="directions.electric.theta = this.value;">
+        <div class="params-group">
+            <h2>Магнитное поле</h2>
+            <canvas id="magnetic_canvas" oncontextmenu="event.preventDefault()"></canvas>
+            <div class="slider-group">
+                <label>Θ (<span class="magnetic-theta">90</span>°)</label>
+                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'theta', this.value);">
+            </div>
+            <div class="slider-group">
+                <label>α (<span class="magnetic-alpha">90</span>°)</label>
+                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'alpha', this.value);">
+            </div>
+            <div class="slider-group">
+                <label>B, [Тл]</label>
+                <input type="range" min="0" max="10" step="1" value="0" oninput="setOption('magnetic', 'force', this.value);">
+            </div>
+            <label>(<span class="magnetic-force">0</span> Тл)</label>
         </div>
-        <div class="slider-group">
-            <label>α</label>
-            <input type="range" min="-90" max="270" step="1" value="90" oninput="directions.electric.alpha = this.value;">
-        </div>
-        <div class="slider-group">
-            <label>Force</label>
-            <input type="range" min="0" max="1000000000000" step="1" value="0" oninput="directions.electric.force = this.value;">
+
+        <div class="params-group">
+            <h2>Электрическое поле</h2>
+            <canvas id="electric_canvas" oncontextmenu="event.preventDefault()"></canvas>
+            <div class="slider-group">
+                <label>Θ (<span class="electric-theta">90</span>°)</label>
+                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'theta', this.value);">
+            </div>
+            <div class="slider-group">
+                <label>α (<span class="electric-alpha">90</span>°)</label>
+                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'alpha', this.value);">
+            </div>
+            <div class="slider-group">
+                <label>q, [Кл]</label>
+                <input type="range" min="0" max="100000000000000000" step="1" value="0" oninput="setOption('electric', 'force', this.value);">
+            </div>
+            <label>(<span class="electric-force">0</span> Кл)</label>
         </div>
     </section>
+
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h3>Компьютерная лабораторная работа<br>"Камера Вильсона"</h3>
+            </div>
+            <div class="modal-body">
+                <h3>Краткая инструкция</h3>
+                <p>В левой части интерфейса расположена 3D-визуализация камеры Вильсона, где разные группы частиц обозначены разными цветами. Камеру можно осматривать с разных сторон, перемещая курсор по холсту, а также можно приостановить или возобновить симуляцию нажатием левой кнопки мыши в любой точке холста.</p>
+                <p>Справа расположены элементы управления симуляцией: направления выстрела частиц, магнитного поля, электрического поля. Чтобы поменять направление, достаточно изменить положение слайдера. Также для полей доступно управление их интенсивностью (по умолчанию поля выключены).</p>
+                <h3>Информация о лабораторной работе</h3>
+                <p>Проект разработан учащимися МГТУ им. Баумана в 2023 году.</p>
+                <p>Руководитель проекта: Францишков С. Е.</p>
+                <p>Над проектом работали:</p>
+                <ul>
+                    <li>Чижевский Д. В.</li>
+                    <li>Халиков Д. Р.</li>
+                </ul>
+            </div>
+        </div>
+        </div>
 
     <script type='text/javascript'>
         let shoot = {theta: 90, alpha: 90}, magnetic = {theta: 90, alpha: 90, force: 0}, electric = {theta: 90, alpha: 90, force: 10};
         let directions = {shoot, magnetic, electric};
+        let paused = false;
         let camera = {x: 0, y: 0, z: 0};
         var Module = {
             canvas: (function() { return document.getElementById('cube_canvas'); })()
@@ -68,6 +103,36 @@
             if (id == 2)
                 return directions.electric;
         }
+
+        function setOption(setting, key, value) {
+            directions[setting][key] = value;
+            let span = document.querySelector(`.${setting}-${key}`);
+            let number = parseInt(value);
+            if (number <= 1_000_000)
+                span.innerHTML = number.toLocaleString();
+            else
+                span.innerHTML = number.toExponential(3).replace('e+', ' × 10<sup>') + '</sup>';
+        }
+
+        function windowSize() {
+            let main = document.querySelector('.main canvas');
+            return {
+                width: main.clientWidth,
+                height: main.clientHeight
+            };
+        }
+
+        function togglePause() {
+            paused = !paused;
+            document.querySelector('.pause').setAttribute('symbol', paused? '⏵' : '⏸');
+        }
+
+        let modal = document.querySelector('#info-modal');
+        let span = document.querySelector('.modal .close');
+
+        span.onclick = () => {
+            modal.style.display = 'none';
+        };
     </script>
 
     <script src="build/cube.js"></script>
