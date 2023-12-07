@@ -8,24 +8,17 @@
 <body>
     <section class="main">
         <div class="pause" onclick="togglePause()" symbol="⏸"></div>
+        <div class="reset" onclick="resetParticles()">↺</div>
         <canvas id="cube_canvas" onclick="togglePause()" oncontextmenu="event.preventDefault()"></canvas>
     </section>
     <section class="sidebar">
         <div class="info">
             <button type="button" onclick="modal.style.display = 'block';">ℹ</button>
         </div>
-        <div class="params-group">
-            <h2>Выстрел частиц</h2>
-            <canvas id="shoot_canvas" oncontextmenu="event.preventDefault()"></canvas>
-            <div class="slider-group">
-                <label>Θ (<span class="shoot-theta">90</span>°)</label>
-                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('shoot', 'theta', this.value);">
-            </div>
-            <div class="slider-group">
-                <label>α (<span class="shoot-alpha">90</span>°)</label>
-                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('shoot', 'alpha', this.value);">
-            </div>
-        </div>
+
+        <h2>Заметки:</h2>
+
+        <div class="select-groups"></div>
 
         <div class="params-group">
             <h2>Магнитное поле</h2>
@@ -87,17 +80,16 @@
         </div>
 
     <script type='text/javascript'>
-        let shoot = {theta: 90, alpha: 90}, magnetic = {theta: 90, alpha: 90, force: 0}, electric = {theta: 90, alpha: 90, force: 10};
-        let directions = {shoot, magnetic, electric};
-        let paused = false;
+        let magnetic = {theta: 90, alpha: 90, force: 0}, electric = {theta: 90, alpha: 90, force: 10};
+        let directions = {magnetic, electric};
+        let paused = false, toBeReseted = false;
         let camera = {x: 0, y: 0, z: 0};
+        let particleTitles = [];
         var Module = {
             canvas: (function() { return document.getElementById('cube_canvas'); })()
         };
 
         function directionById(id) {
-            if (id == 0)
-                return directions.shoot;
             if (id == 1)
                 return directions.magnetic;
             if (id == 2)
@@ -117,14 +109,50 @@
         function windowSize() {
             let main = document.querySelector('.main canvas');
             return {
-                width: main.clientWidth,
-                height: main.clientHeight
+                width: main.clientWidth * window.devicePixelRatio,
+                height: main.clientHeight * window.devicePixelRatio
             };
         }
 
         function togglePause() {
             paused = !paused;
             document.querySelector('.pause').setAttribute('symbol', paused? '⏵' : '⏸');
+        }
+
+        function resetParticles() {
+            toBeReseted = true;
+        }
+
+        function RGBAToHexA(r, g, b, a) {
+            r = r.toString(16);
+            g = g.toString(16);
+            b = b.toString(16);
+
+            if (r.length == 1)
+                r = "0" + r;
+            if (g.length == 1)
+                g = "0" + g;
+            if (b.length == 1)
+                b = "0" + b;
+
+            return "#" + r + g + b;
+        }
+
+        function initPoint(r, g, b, p, len) {
+            let title = (new TextDecoder()).decode(new Uint8Array(Module.wasmMemory.buffer, p, len));
+            let selectGroups = document.querySelector('.select-groups');
+            selectGroups.insertAdjacentHTML('beforeEnd',
+                `<div class="select-group">
+                    <div class="color-indicator" style="background-color: ${RGBAToHexA(r, g, b)};"></div>
+                    <select class="color-select">
+                        <option>Не выбрано</option>
+                        ${particleTitles.map((title) => {return '<option>' + title + '</option>'}).join('')}
+                    </select>
+                </div>`);
+            particleTitles.push(title);
+            for (let selectGroup of document.querySelectorAll('.color-select')) {
+                selectGroup.insertAdjacentHTML('beforeEnd', '<option>' + title + '</option>');
+            }
         }
 
         let modal = document.querySelector('#info-modal');
@@ -136,15 +164,10 @@
     </script>
 
     <script src="build/cube.js"></script>
-    <script src="build/shoot.js"></script>
     <script src="build/magnetic.js"></script>
     <script src="build/electric.js"></script>
 
     <script type='text/javascript'>
-        Shoot().then((instance) => {
-            instance['canvas']=(function() { return document.getElementById('shoot_canvas'); })();
-            instance._main()
-        });
         Magnetic().then((instance) => {
             instance['canvas']=(function() { return document.getElementById('magnetic_canvas'); })();
             instance._main()

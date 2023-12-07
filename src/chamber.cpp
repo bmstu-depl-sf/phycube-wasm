@@ -137,22 +137,12 @@ void MyWilsonCloudChamber::initSourcesAndLifeTimeControllers()
 {
     const Vector& borders = cyclicBorder_->getBorders();
 
-    const double electronBornPeriod = 1e-11;
-    const double electronEnergy = 1e-17;
-    const double protonEnergy = 1e-15;
-
+    const double specificBornPeriod = 1e-11;
     const Vector direction{ 1., 0., 0. };
     const double coneAngle = .1;
     const Vector sourceCoordinate = { 0., borders.y() / 2, borders.z() / 2 };
 
-    const ParticleOptions electronOptions{ ElectricConstants::electronWeight,
-        ElectricConstants::electronCharge };
-    const ParticleOptions protonOptions{ ElectricConstants::protonWeight,
-        ElectricConstants::protonCharge };
-
-    std::vector<std::pair<const double, const ParticleOptions>> specs;
-    specs.push_back(std::make_pair(electronEnergy, electronOptions));
-    specs.push_back(std::make_pair(protonEnergy, protonOptions));
+    std::vector<std::tuple<const double, const double, const double, std::string>> specs PARTICLE_SPECS;
 
     for (auto specsIt = specs.begin(); specsIt != specs.end(); specsIt++)
     {
@@ -160,10 +150,10 @@ void MyWilsonCloudChamber::initSourcesAndLifeTimeControllers()
         BornPeriodLifeTimeControllerPtr specificBornPeriodLifeTimeController_;
 
         specificConeParticleSource_ = std::make_shared< ConeParticleSource >(
-            direction, coneAngle, sourceCoordinate, specsIt->second, specsIt->first );
+            direction, coneAngle, sourceCoordinate, (ParticleOptions) {std::get<1>(*specsIt), std::get<2>(*specsIt)}, std::get<0>(*specsIt));
         specificBornPeriodLifeTimeController_
             = std::make_shared< BornPeriodLifeTimeController >(
-                electronBornPeriod, specificConeParticleSource_ );
+                specificBornPeriod, specificConeParticleSource_ );
 
         cyclicBorder_->addBorderReachedObserver( specificBornPeriodLifeTimeController_ );
         addLifeTimeController( specificBornPeriodLifeTimeController_ );

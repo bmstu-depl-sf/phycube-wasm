@@ -49,6 +49,7 @@ section.sidebar canvas {
 
 .slider-group input {
     -webkit-appearance: none;
+    outline: none;
     padding: 2pt;
     appearance: none;
     width: 70%;
@@ -90,6 +91,7 @@ section.sidebar canvas {
 }
 
 .info button {
+    outline: none;
     width: 35px;
     height: 35px;
     border: 0;
@@ -152,7 +154,44 @@ li {
 .pause::before {
     content: attr(symbol);
     color: white;
-    height: 0;
     cursor: pointer;
     height: 30pt;
-  }
+}
+
+.reset {
+    position: absolute;
+    font-size: 40pt;
+    margin: 20pt;
+    margin-top: 18pt;
+    margin-left: 60pt;
+    color: white;
+    cursor: pointer;
+    height: 30pt;
+}
+
+.select-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.select-group {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+}
+
+.color-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+}
+
+.color-select {
+    flex-grow: 1;
+    border-radius: 0;
+    border-width: 0;
+    font-size: 12pt;
+    outline: none;
+    height: 40px;
+}

@@ -12,14 +12,14 @@ int getWidth() {
     double width = EM_ASM_DOUBLE({
         return windowSize().width;
     });
-    return (int) width * 2;
+    return (int) width;
 }
 
 int getHeight() {
     double height = EM_ASM_DOUBLE({
         return windowSize().height;
     });
-    return (int) height * 2;
+    return (int) height;
 }
 
 int main(void)
@@ -30,7 +30,7 @@ int main(void)
     Vector borders(1e-4), cubeSize(10);
     wilsonCloudChamber.setBorders(borders);
     wilsonCloudChamber.setDeltaTime(dt);
-    wilsonCloudChamber.setSpecificSourcBornPeriod(100 * dt);
+    wilsonCloudChamber.setSpecificSourcBornPeriod(BORN_PERIOD * dt);
 
     // Инициализируем окно
     InitWindow(getWidth(), getHeight(), TITLE);
@@ -48,6 +48,15 @@ int main(void)
     vector<Color> colors = {RED, GREEN, YELLOW, ORANGE, VIOLET};
     shuffle(colors.begin(), colors.end(), default_random_engine {random_device {}()});
 
+    std::vector<std::tuple<const double, const double, const double, std::string>> specs PARTICLE_SPECS;
+    for (size_t i = 0; i < specs.size(); i++) {
+        const char *title = get<3>(specs[i]).c_str();
+        EM_ASM({
+            initPoint($0, $1, $2, $3, $4);
+        }, colors[i].r, colors[i].g, colors[i].b, title, strlen(title));
+    }
+
+    shuffle(colors.begin(), colors.begin() + specs.size(), default_random_engine {random_device {}()});
     map<Particle*, vector<Vector>> traectories;
     vector<pair<ParticleOptions, Color>> colorsAssociations;
     uint64_t ticks = 0;
@@ -66,16 +75,6 @@ int main(void)
             camera.y = $1;
             camera.z = $2;
         }, camera.position.x, camera.position.y, camera.position.z);
-
-        // Вытягиваем направление выстрела частиц
-        double shoot_theta = EM_ASM_DOUBLE({
-            return directions.shoot.theta;
-        });
-        double shoot_alpha = EM_ASM_DOUBLE({
-            return directions.shoot.alpha;
-        });
-        Vector shootDirection = anglesToVector(shoot_theta, shoot_alpha);
-        wilsonCloudChamber.setSpecificSourceDirection(shootDirection);
 
         // Вытягиваем характеристики магнитного поля
         double magnetic_theta = EM_ASM_DOUBLE({
@@ -109,6 +108,15 @@ int main(void)
         });
         if (!paused)
             wilsonCloudChamber.phyCoub();
+
+        // Проверяем, нужно ли очистить список частиц
+        int toBeReseted = EM_ASM_({
+            return toBeReseted;
+        });
+        if (toBeReseted) {
+            (*((ParticleGroupList) wilsonCloudChamber.getUniqParticleGroupList()).begin())->clear();
+            EM_ASM_(toBeReseted = false);
+        }
         
         // Очищаем экран
         BeginDrawing();
