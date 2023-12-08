@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    display: flex;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h2 {
+    font-size: 20pt;
+}
+
+section.main {
+    flex-grow: 2;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-color: black;
+}
+
+section.main canvas {
+    height: 100vh;
+    width: calc(100vh * 4 / 3);
+}
+
+section.sidebar {
+    padding: 20px;
+    background-color: lightgrey;
+}
+
+section.sidebar canvas {
+    border-radius: 20px;
+    width: 300px;
+    height: 300px;
+}
