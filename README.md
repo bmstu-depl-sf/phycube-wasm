@@ -2,9 +2,9 @@
 
 Инструкция по сборке:
 
-1. Скачать и распаковать [стабильную сборку](https://github.com/raysan5/raylib/releases/tag/4.5.0) библиотеки для WebAssembly.
+1. Скачать и распаковать [стабильную сборку](https://github.com/raysan5/raylib/releases/tag/4.5.0) библиотеки для WebAssembly (необязательно, стабильная сборка уже включена в репозиторий).
 
-2. Установить Emscripten (необязательно, стабильная сборка уже включена в репозиторий):
+2. Установить Emscripten:
 - MacOS: `brew install emscripten`
 - Linux: `apt install emscripten`
 - Windows: [инструкция](https://emscripten.org/docs/getting_started/downloads.html)
