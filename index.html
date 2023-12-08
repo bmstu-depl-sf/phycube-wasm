@@ -12,48 +12,53 @@
         <canvas id="cube_canvas" onclick="togglePause()" oncontextmenu="event.preventDefault()"></canvas>
     </section>
     <section class="sidebar">
-        <div class="info">
+        <div class="tabs">
+            <button class="active" type="button" onclick="showTab('.params-tab')">Параметры</button>
+            <button type="button" onclick="showTab('.notes-tab')">Заметки</button>
             <button type="button" onclick="modal.style.display = 'block';">ℹ</button>
         </div>
 
-        <h2>Заметки:</h2>
+        <div class="tab params-tab visible">
+            <div class="params-group">
+                <h2>Магнитное поле</h2>
+                <canvas id="magnetic_canvas" oncontextmenu="event.preventDefault()"></canvas>
+                <div class="slider-group">
+                    <label>Θ (<span class="magnetic-theta">90</span>°)</label>
+                    <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'theta', this.value);">
+                </div>
+                <div class="slider-group">
+                    <label>α (<span class="magnetic-alpha">90</span>°)</label>
+                    <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'alpha', this.value);">
+                </div>
+                <div class="slider-group">
+                    <label>B, [Тл]</label>
+                    <input type="range" min="0" max="10" step="1" value="0" oninput="setOption('magnetic', 'force', this.value);">
+                </div>
+                <label>(<span class="magnetic-force">0</span> Тл)</label>
+            </div>
 
-        <div class="select-groups"></div>
-
-        <div class="params-group">
-            <h2>Магнитное поле</h2>
-            <canvas id="magnetic_canvas" oncontextmenu="event.preventDefault()"></canvas>
-            <div class="slider-group">
-                <label>Θ (<span class="magnetic-theta">90</span>°)</label>
-                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'theta', this.value);">
+            <div class="params-group">
+                <h2>Электрическое поле</h2>
+                <canvas id="electric_canvas" oncontextmenu="event.preventDefault()"></canvas>
+                <div class="slider-group">
+                    <label>Θ (<span class="electric-theta">90</span>°)</label>
+                    <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'theta', this.value);">
+                </div>
+                <div class="slider-group">
+                    <label>α (<span class="electric-alpha">90</span>°)</label>
+                    <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'alpha', this.value);">
+                </div>
+                <div class="slider-group">
+                    <label>q, [Кл]</label>
+                    <input type="range" min="0" max="100000000000000000" step="1" value="0" oninput="setOption('electric', 'force', this.value);">
+                </div>
+                <label>(<span class="electric-force">0</span> Кл)</label>
             </div>
-            <div class="slider-group">
-                <label>α (<span class="magnetic-alpha">90</span>°)</label>
-                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'alpha', this.value);">
-            </div>
-            <div class="slider-group">
-                <label>B, [Тл]</label>
-                <input type="range" min="0" max="10" step="1" value="0" oninput="setOption('magnetic', 'force', this.value);">
-            </div>
-            <label>(<span class="magnetic-force">0</span> Тл)</label>
         </div>
 
-        <div class="params-group">
-            <h2>Электрическое поле</h2>
-            <canvas id="electric_canvas" oncontextmenu="event.preventDefault()"></canvas>
-            <div class="slider-group">
-                <label>Θ (<span class="electric-theta">90</span>°)</label>
-                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'theta', this.value);">
-            </div>
-            <div class="slider-group">
-                <label>α (<span class="electric-alpha">90</span>°)</label>
-                <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'alpha', this.value);">
-            </div>
-            <div class="slider-group">
-                <label>q, [Кл]</label>
-                <input type="range" min="0" max="100000000000000000" step="1" value="0" oninput="setOption('electric', 'force', this.value);">
-            </div>
-            <label>(<span class="electric-force">0</span> Кл)</label>
+        <div class="tab notes-tab">
+            <h2>Заметки:</h2>
+            <div class="select-groups"></div>
         </div>
     </section>
 
@@ -153,6 +158,15 @@
             for (let selectGroup of document.querySelectorAll('.color-select')) {
                 selectGroup.insertAdjacentHTML('beforeEnd', '<option>' + title + '</option>');
             }
+        }
+
+        function showTab(selector) {
+            for (let tab of document.querySelectorAll('.tab.visible'))
+                tab.classList.toggle('visible');
+            document.querySelector(selector).classList.add('visible');
+            for (let button of document.querySelectorAll('.tabs button.active'))
+                button.classList.toggle('active');
+            event.target.classList.add('active');
         }
 
         let modal = document.querySelector('#info-modal');

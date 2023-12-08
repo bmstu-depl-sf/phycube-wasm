@@ -81,7 +81,7 @@ section.sidebar canvas {
     margin-top: 5px;
 }
 
-.info {
+.tabs {
     max-width: 300px;
     width: 100%;
     position: absolute;
@@ -90,16 +90,29 @@ section.sidebar canvas {
     justify-content: end;
 }
 
-.info button {
+.tabs button {
+    flex-grow: 1;
     outline: none;
-    width: 35px;
-    height: 35px;
+    padding: 10px 10px;
     border: 0;
-    background-color: white;
     cursor: pointer;
     margin-top: 15pt;
     margin-right: 3pt;
     font-size: 15pt;
+    background-color: lightgray;
+}
+
+.tabs button.active {
+    background-color: white;
+}
+
+.tab {
+    width: 300px;
+    display: none;
+}
+
+.tab.visible {
+    display: block;
 }
 
 .modal {

@@ -74,10 +74,6 @@ class MyWilsonCloudChamber : public PhyCoub
     BorderFieldConditionPtr borderFieldCondition_;
     ElectricFieldPtr electricField_;
 
-    /*
-        Можно было бы обойтись одной группой, но с целью тестирования
-        частицы разделенеы на три группы
-    */
     InterGroupCommunicationPtr groupInterCommunication_;
     std::vector<ConeParticleSourcePtr> coneParticleSource_;
     std::vector<BornPeriodLifeTimeControllerPtr> bornPeriodLifeTimeController_;
