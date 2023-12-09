@@ -19,16 +19,9 @@ Vector anglesToVector(double theta, double alpha)
     theta *= M_PI / 180;
     alpha *= M_PI / 180;
     double x, y, z, len;
-    if (alpha) {
-        x = sin(theta);
-        y = cos(theta);
-        z = 1.0 / tan(alpha);
-    }
-    else {
-        x = 0;
-        y = 0;
-        z = 1;
-    }
+    x = sin(theta) * cos(alpha);
+    y = sin(theta) * sin(alpha);
+    z = cos(theta);
     len = sqrt(x*x + y*y + z*z);
     return Vector(x / len, y / len, z / len);
 }
@@ -38,16 +31,9 @@ Vector3 anglesToVector3(double theta, double alpha)
     theta *= M_PI / 180;
     alpha *= M_PI / 180;
     double x, y, z, len;
-    if (alpha) {
-        x = sin(theta);
-        y = cos(theta);
-        z = 1.0 / tan(alpha);
-    }
-    else {
-        x = 0;
-        y = 0;
-        z = 1;
-    }
+    x = sin(theta) * cos(alpha);
+    y = sin(theta) * sin(alpha);
+    z = cos(theta);
     len = sqrt(x*x + y*y + z*z) / 5;
     Vector3 result = {static_cast<float>(x / len), static_cast<float>(y / len), static_cast<float>(z / len)};
     return result;

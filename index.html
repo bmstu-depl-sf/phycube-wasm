@@ -27,8 +27,8 @@
                     <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'theta', this.value);">
                 </div>
                 <div class="slider-group">
-                    <label>α (<span class="magnetic-alpha">90</span>°)</label>
-                    <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('magnetic', 'alpha', this.value);">
+                    <label>α (<span class="magnetic-alpha">0</span>°)</label>
+                    <input type="range" min="0" max="360" step="1" value="0" oninput="setOption('magnetic', 'alpha', this.value);">
                 </div>
                 <div class="slider-group">
                     <label>B, [Тл]</label>
@@ -45,8 +45,8 @@
                     <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'theta', this.value);">
                 </div>
                 <div class="slider-group">
-                    <label>α (<span class="electric-alpha">90</span>°)</label>
-                    <input type="range" min="0" max="180" step="1" value="90" oninput="setOption('electric', 'alpha', this.value);">
+                    <label>α (<span class="electric-alpha">0</span>°)</label>
+                    <input type="range" min="0" max="360" step="1" value="0" oninput="setOption('electric', 'alpha', this.value);">
                 </div>
                 <div class="slider-group">
                     <label>q, [Кл]</label>
@@ -71,7 +71,7 @@
             <div class="modal-body">
                 <h3>Краткая инструкция</h3>
                 <p>В левой части интерфейса расположена 3D-визуализация камеры Вильсона, где разные группы частиц обозначены разными цветами. Камеру можно осматривать с разных сторон, перемещая курсор по холсту, а также можно приостановить или возобновить симуляцию нажатием левой кнопки мыши в любой точке холста.</p>
-                <p>Справа расположены элементы управления симуляцией: направления выстрела частиц, магнитного поля, электрического поля. Чтобы поменять направление, достаточно изменить положение слайдера. Также для полей доступно управление их интенсивностью (по умолчанию поля выключены).</p>
+                <p>Справа расположены элементы управления симуляцией: магнитного и электрического поля. Чтобы поменять направление, достаточно изменить положение слайдера. Также для полей доступно управление их интенсивностью (по умолчанию поля выключены).</p>
                 <h3>Информация о лабораторной работе</h3>
                 <p>Проект разработан учащимися МГТУ им. Баумана в 2023 году.</p>
                 <p>Руководитель проекта: Францишков С. Е.</p>
@@ -85,7 +85,7 @@
         </div>
 
     <script type='text/javascript'>
-        let magnetic = {theta: 90, alpha: 90, force: 0}, electric = {theta: 90, alpha: 90, force: 10};
+        let magnetic = {theta: 90, alpha: 0, force: 0}, electric = {theta: 90, alpha: 0, force: 10};
         let directions = {magnetic, electric};
         let paused = false, toBeReseted = false;
         let camera = {x: 0, y: 0, z: 0};

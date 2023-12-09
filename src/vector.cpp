@@ -14,9 +14,9 @@ int main(void)
     // Инициализируем камеру
     Camera camera = { 0 };
     camera.position = (Vector3){ 20.0f, 0.0f, 0.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
+    camera.target = (Vector3){ 5.0f, 5.0f, 5.0f };
     camera.up = (Vector3){ 0.0f, 0.0f, 1.0f };
-    camera.fovy = 35.0f;
+    camera.fovy = 50.0f;
     SetTargetFPS(FPS);
 
     while (!WindowShouldClose())
@@ -34,7 +34,7 @@ int main(void)
         camera.position.z = EM_ASM_DOUBLE({
             return camera.z;
         });
-        camera.position = mul(camera.position, 20 / size(camera.position)); 
+        //camera.position = mul(camera.position, 20 / size(camera.position)); 
 
         // Получаем нужные углы для отрисовки вектора
         double theta = EM_ASM_DOUBLE({
@@ -50,16 +50,17 @@ int main(void)
         BeginMode3D(camera);
 
         // Рисуем три оси
-        DrawLine3D({5, 0, 0}, {0, 0, 0}, RED);
-        DrawCylinderEx({5, 0, 0}, {5.5, 0, 0}, 0.15, 0, 25, RED);
-        DrawLine3D({0, 5, 0}, {0, 0, 0}, GREEN);
-        DrawCylinderEx({0, 5, 0}, {0, 5.5, 0}, 0.15, 0, 25, GREEN);
-        DrawLine3D({0, 0, 5}, {0, 0, 0}, BLUE);
-        DrawCylinderEx({0, 0, 5}, {0, 0, 5.5}, 0.15, 0, 25, BLUE);
+        DrawLine3D({10, 5, 5}, {5, 5, 5}, RED);
+        DrawCylinderEx({10, 5, 5}, {10.5, 5, 5}, 0.15, 0, 25, RED);
+        DrawLine3D({5, 10, 5}, {5, 5, 5}, GREEN);
+        DrawCylinderEx({5, 10, 5}, {5, 10.5, 5}, 0.15, 0, 25, GREEN);
+        DrawLine3D({5, 5, 10}, {5, 5, 5}, BLUE);
+        DrawCylinderEx({5, 5, 10}, {5, 5, 10.5}, 0.15, 0, 25, BLUE);
 
         // Рисуем вектор по полученным углам
-        DrawLine3D(anglesToVector3(theta, alpha), {0, 0, 0}, YELLOW);
-        DrawCylinderEx(anglesToVector3(theta, alpha), mul(anglesToVector3(theta, alpha), 5.5/5.0), 0.15, 0, 25, YELLOW);
+        DrawLine3D(sum(anglesToVector3(theta, alpha), {5, 5, 5}), {5, 5, 5}, YELLOW);
+        DrawCylinderEx(sum(anglesToVector3(theta, alpha), {5, 5, 5}), sum(mul(anglesToVector3(theta, alpha), 5.5/5.0), {5, 5, 5}), 0.15, 0, 25, YELLOW);
+        DrawCubeWires(camera.target, 10, 10, 10, WHITE);
 
         EndMode3D();
         EndDrawing();

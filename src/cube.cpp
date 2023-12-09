@@ -25,12 +25,12 @@ int getHeight() {
 int main(void)
 {
     // Инициализируем класс камеры Вильсона
-    const double dt = 1e-13;
+    const double dt = 1e-15;
     MyWilsonCloudChamber wilsonCloudChamber;
     Vector borders(1e-4), cubeSize(10);
     wilsonCloudChamber.setBorders(borders);
     wilsonCloudChamber.setDeltaTime(dt);
-    wilsonCloudChamber.setSpecificSourcBornPeriod(BORN_PERIOD * dt);
+    wilsonCloudChamber.setSpecificSourcBornPeriod(2.5e-11);
 
     // Инициализируем окно
     InitWindow(getWidth(), getHeight(), TITLE);
@@ -107,7 +107,8 @@ int main(void)
             return paused;
         });
         if (!paused)
-            wilsonCloudChamber.phyCoub();
+            for (int i = 0; i < 100; i++)
+                wilsonCloudChamber.phyCoub();
 
         // Проверяем, нужно ли очистить список частиц
         int toBeReseted = EM_ASM_({
@@ -181,6 +182,8 @@ int main(void)
         // Завершаем отрисовку
         DrawCubeWires(camera.target, cubeSize.x(), cubeSize.y(), cubeSize.z(), WHITE);
         EndMode3D();
+
+        DrawFPS(10, 10);
         EndDrawing();
     }
 

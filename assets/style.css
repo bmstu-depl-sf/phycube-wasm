@@ -38,6 +38,10 @@ section.sidebar canvas {
     height: 300px;
 }
 
+.params-tab {
+    margin-top: 60pt;
+}
+
 .params-group {
     padding-bottom: 20px;
 }
